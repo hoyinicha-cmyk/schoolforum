@@ -173,7 +173,7 @@ const Messages = () => {
             {/* Chat Header */}
             <div className="p-4 border-b border-gray-200 flex items-center gap-3">
               <button
-                onClick={() => navigate('/messages')}
+                onClick={() => navigate('/app/messages')}
                 className="lg:hidden text-gray-600 hover:text-gray-900"
               >
                 <ArrowLeftIcon className="h-6 w-6" />

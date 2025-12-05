@@ -20,7 +20,7 @@ const NotFound = () => {
             Go Back
           </button>
           <button 
-            onClick={() => navigate('/dashboard')} 
+            onClick={() => navigate('/app')} 
             className="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition flex items-center gap-2"
           >
             <HomeIcon className="h-5 w-5" />

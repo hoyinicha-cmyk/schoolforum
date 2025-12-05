@@ -337,7 +337,7 @@ const Dashboard = () => {
             </Link>
           ) : (
             <Link
-              to="/forum/general"
+              to="/app/forum/general"
               className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-emerald-600 bg-white hover:bg-emerald-50 sm:w-auto transition-colors"
             >
               Visit Forums
@@ -358,10 +358,10 @@ const Dashboard = () => {
             </Link>
             {isAuthenticated && (
               <>
-                <Link to="/" className="text-gray-500 hover:text-gray-900">
+                <Link to="/app" className="text-gray-500 hover:text-gray-900">
                   Dashboard
                 </Link>
-                <Link to="/forum/general" className="text-gray-500 hover:text-gray-900">
+                <Link to="/app/forum/general" className="text-gray-500 hover:text-gray-900">
                   Forums
                 </Link>
               </>

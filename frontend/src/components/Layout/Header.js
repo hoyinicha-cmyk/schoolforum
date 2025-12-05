@@ -122,7 +122,7 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo and Title */}
           <div className="flex items-center min-w-0 flex-1">
-            <Link to="/" className="flex items-center space-x-2 min-w-0">
+            <Link to="/app" className="flex items-center space-x-2 min-w-0">
               {/* FIXED: real gradient class */}
               <div className="h-8 w-8 flex-shrink-0 bg-gradient-to-r from-emerald-500 to-green-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">SF</span>
@@ -253,7 +253,7 @@ const Header = () => {
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                       <div className="py-1">
                         <Link
-                          to="/profile"
+                          to="/app/profile"
                           className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           onClick={() => setIsProfileMenuOpen(false)}
                         >
@@ -261,7 +261,7 @@ const Header = () => {
                           Profile
                         </Link>
                         <Link
-                          to="/dashboard"
+                          to="/app"
                           className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           onClick={() => setIsProfileMenuOpen(false)}
                         >
@@ -270,7 +270,7 @@ const Header = () => {
                         </Link>
                         {(user.role === 'admin' || user.role === 'moderator') && (
                           <Link
-                            to="/admin"
+                            to="/app/admin"
                             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             onClick={() => setIsProfileMenuOpen(false)}
                           >
@@ -340,14 +340,14 @@ const Header = () => {
                     <div className="mt-1">{getStatusBadge()}</div>
                   </div>
                   <Link
-                    to="/dashboard"
+                    to="/app"
                     className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
-                    to="/profile"
+                    to="/app/profile"
                     className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -355,7 +355,7 @@ const Header = () => {
                   </Link>
                   {(user.role === 'admin' || user.role === 'moderator') && (
                     <Link
-                      to="/admin"
+                      to="/app/admin"
                       className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >

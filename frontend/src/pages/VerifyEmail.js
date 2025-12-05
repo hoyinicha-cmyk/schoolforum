@@ -26,7 +26,7 @@ const VerifyEmail = () => {
             
             // Reload the page to refresh the UI
             setTimeout(() => {
-              window.location.href = '/dashboard';
+              window.location.href = '/app';
             }, 2000);
           }
         } else {

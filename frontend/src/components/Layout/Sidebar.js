@@ -96,25 +96,25 @@ const Sidebar = () => {
   const navigation = [
     {
       name: 'Dashboard',
-      href: '/',
+      href: '/app',
       icon: HomeIcon,
-      current: location.pathname === '/',
+      current: location.pathname === '/app' || location.pathname === '/app/',
       show: true
     },
     {
       name: 'Messages',
-      href: '/messages',
+      href: '/app/messages',
       icon: ChatBubbleOvalLeftEllipsisIcon,
-      current: location.pathname.startsWith('/messages'),
+      current: location.pathname.startsWith('/app/messages'),
       show: true,
       badge: unreadCount > 0 ? unreadCount : null,
       badgeType: 'unread'
     },
     {
       name: 'Chat Box',
-      href: '/chatbox',
+      href: '/app/chatbox',
       icon: ChatBubbleLeftRightIcon,
-      current: location.pathname === '/chatbox',
+      current: location.pathname === '/app/chatbox',
       show: chatBoxAccess,
       requiresBadge: 'Forum Active (25+ points)',
       badge: mentionCount > 0 ? mentionCount : null,
@@ -122,33 +122,33 @@ const Sidebar = () => {
     },
     {
       name: 'General Discussion',
-      href: '/forum/general',
+      href: '/app/forum/general',
       icon: ChatBubbleLeftRightIcon,
-      current: location.pathname === '/forum/general',
+      current: location.pathname === '/app/forum/general',
       show: isEmailVerified(),
       badge: accessibleForums.includes('general') ? null : 'Locked'
     },
     {
       name: 'Grade 11 Forum',
-      href: '/forum/g11',
+      href: '/app/forum/g11',
       icon: AcademicCapIcon,
-      current: location.pathname === '/forum/g11',
+      current: location.pathname === '/app/forum/g11',
       show: isApproved() && (canAccessGrade('G11') || isModerator() || isAdmin()),
       badge: accessibleForums.includes('g11') ? null : 'G11 Only'
     },
     {
       name: 'Grade 12 Forum',
-      href: '/forum/g12',
+      href: '/app/forum/g12',
       icon: AcademicCapIcon,
-      current: location.pathname === '/forum/g12',
+      current: location.pathname === '/app/forum/g12',
       show: isApproved() && (canAccessGrade('G12') || isModerator() || isAdmin()),
       badge: accessibleForums.includes('g12') ? null : 'G12 Only'
     },
     {
       name: 'Upload School ID',
-      href: '/upload',
+      href: '/app/upload',
       icon: CloudArrowUpIcon,
-      current: location.pathname === '/upload',
+      current: location.pathname === '/app/upload',
       show: isEmailVerified() && user?.status === 'pending',
       badge: 'Required'
     }
@@ -157,9 +157,9 @@ const Sidebar = () => {
   const adminNavigation = [
     {
       name: 'Admin Panel',
-      href: '/admin',
+      href: '/app/admin',
       icon: UserGroupIcon,
-      current: location.pathname.startsWith('/admin'),
+      current: location.pathname.startsWith('/app/admin'),
       show: isAdmin() || isModerator()
     }
   ];

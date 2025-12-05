@@ -1020,8 +1020,8 @@ router.post('/change-password', authMiddleware, [
   }
 });
 
-// Get dashboard statistics
-router.get('/dashboard-stats', authMiddleware, async (req, res) => {
+// Get dashboard statistics (PUBLIC - no auth required)
+router.get('/dashboard-stats', async (req, res) => {
   console.log('🎯 Dashboard stats endpoint hit!');
   try {
     const db = require('../config/database');
@@ -1037,51 +1037,69 @@ router.get('/dashboard-stats', authMiddleware, async (req, res) => {
       GROUP BY forum_type
     `);
     
-    // Get latest post (filtered by user's accessible forums)
-    const userRole = req.user.role;
-    const userYearLevel = req.user.yearLevel;
-    
-    let forumFilter = '';
-    if (userRole === 'admin' || userRole === 'moderator') {
-      // Admin/moderator can see all forums
-      forumFilter = '';
-    } else if (userYearLevel === 'G11') {
-      // G11 students can see general and g11
-      forumFilter = "AND p.forum_type IN ('general', 'g11')";
-    } else if (userYearLevel === 'G12') {
-      // G12 students can see general and g12
-      forumFilter = "AND p.forum_type IN ('general', 'g12')";
-    } else {
-      // Others can only see general
-      forumFilter = "AND p.forum_type = 'general'";
-    }
-    
-    const [latestPost] = await db.execute(`
+    // Get latest 10 posts from general forum (public)
+    const [recentPosts] = await db.execute(`
       SELECT 
         p.id,
         p.title,
+        p.content,
         p.forum_type as forumType,
         p.created_at as createdAt,
+        p.view_count as viewCount,
+        u.id as authorId,
         u.first_name as authorFirstName,
-        u.last_name as authorLastName
+        u.last_name as authorLastName,
+        u.avatar_id as authorAvatar,
+        u.year_level as authorYearLevel,
+        (SELECT COUNT(*) FROM replies r WHERE r.post_id = p.id) as replyCount
       FROM posts p
       JOIN users u ON p.user_id = u.id
-      WHERE 1=1 ${forumFilter}
+      WHERE p.forum_type = 'general'
       ORDER BY p.created_at DESC
-      LIMIT 1
+      LIMIT 10
     `);
     
-    // Get newest user
-    const [newestUser] = await db.execute(`
+    // Get newest 10 users with profile info
+    const [newestUsers] = await db.execute(`
       SELECT 
         id,
         first_name as firstName,
         last_name as lastName,
         year_level as yearLevel,
-        created_at as createdAt
+        avatar_id as avatarId,
+        badge,
+        points,
+        created_at as createdAt,
+        status,
+        role
       FROM users
+      WHERE status = 'active'
       ORDER BY created_at DESC
-      LIMIT 1
+      LIMIT 10
+    `);
+
+    // Get moderators and admins
+    const [moderators] = await db.execute(`
+      SELECT 
+        id,
+        first_name as firstName,
+        last_name as lastName,
+        year_level as yearLevel,
+        avatar_id as avatarId,
+        badge,
+        points,
+        created_at as createdAt,
+        status,
+        role
+      FROM users
+      WHERE role IN ('admin', 'moderator') AND status = 'active'
+      ORDER BY 
+        CASE role 
+          WHEN 'admin' THEN 1 
+          WHEN 'moderator' THEN 2 
+          ELSE 3 
+        END,
+        created_at ASC
     `);
     
     // Get user counts with DISTINCT to avoid duplicates
@@ -1110,8 +1128,9 @@ router.get('/dashboard-stats', authMiddleware, async (req, res) => {
     
     res.json({
       weeklyPosts: weeklyPostsData,
-      latestPost: latestPost[0] || null,
-      newestUser: newestUser[0] || null,
+      recentPosts: recentPosts || [],
+      newestUsers: newestUsers || [],
+      moderators: moderators || [],
       userStats: userStats[0]
     });
   } catch (error) {

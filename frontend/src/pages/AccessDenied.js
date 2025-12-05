@@ -68,7 +68,7 @@ const AccessDenied = () => {
             </button>
             
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/app')}
               className="w-full px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
             >
               Go to Dashboard

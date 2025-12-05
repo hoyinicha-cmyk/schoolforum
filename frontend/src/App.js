@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
+import GuestDashboard from "./pages/GuestDashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ChatBox from "./pages/ChatBox";
@@ -36,7 +37,8 @@ function App() {
       {/* <UserStatusMonitor /> */}
       <Routes>
 
-      {/* Public */}
+      {/* Public Routes */}
+      <Route path="/" element={<GuestDashboard />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -54,7 +56,7 @@ function App() {
       <Route path="/404" element={<NotFound />} />
 
       {/* Protected Routes inside Layout (with Header + Sidebar) */}
-      <Route path="/" element={<Layout />}>
+      <Route path="/app" element={<Layout />}>
         
         <Route index element={
           <ProtectedRoute>
@@ -196,6 +198,9 @@ function App() {
         />
 
       </Route>
+
+      {/* Legacy redirect for old root path */}
+      <Route path="/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
 
       {/* 404 */}
       <Route path="*" element={<NotFound />} />

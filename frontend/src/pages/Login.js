@@ -81,19 +81,19 @@ const Login = () => {
 
         // ADMIN - redirect to admin panel
         if (role === "admin") {
-          console.log('🔀 Redirecting to /admin');
-          return window.location.href = "/admin";
+          console.log('🔀 Redirecting to /app/admin');
+          return window.location.href = "/app/admin";
         }
 
         // MODERATOR - redirect to general forum
         if (role === "moderator") {
-          console.log('🔀 Redirecting to /forum/general');
-          return window.location.href = "/forum/general";
+          console.log('🔀 Redirecting to /app/forum/general');
+          return window.location.href = "/app/forum/general";
         }
 
         // STUDENT - redirect to dashboard (chatbox)
-        console.log('🔀 Redirecting to /');
-        return window.location.href = "/";
+        console.log('🔀 Redirecting to /app');
+        return window.location.href = "/app";
       } else {
         // Login failed
         console.error('❌ Login failed:', result.error);

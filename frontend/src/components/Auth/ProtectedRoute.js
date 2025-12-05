@@ -41,7 +41,7 @@ const ProtectedRoute = ({
               Please check your email and click the verification link to access this content.
             </p>
             <div className="mt-4">
-              <Navigate to="/dashboard" replace />
+              <Navigate to="/app" replace />
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@ const ProtectedRoute = ({
               Your account is pending admin approval. You can only access General Discussion for now.
             </p>
             <div className="mt-4">
-              <Navigate to="/forum/general" replace />
+              <Navigate to="/app/forum/general" replace />
             </div>
           </div>
         </div>
@@ -104,7 +104,7 @@ const ProtectedRoute = ({
                 Your grade: {user?.yearLevel} | Status: {user?.status}
               </p>
               <div className="mt-4">
-                <Navigate to="/dashboard" replace />
+                <Navigate to="/app" replace />
               </div>
             </div>
           </div>
@@ -129,7 +129,7 @@ const ProtectedRoute = ({
               You need administrator privileges to access this content.
             </p>
             <div className="mt-4">
-              <Navigate to="/dashboard" replace />
+              <Navigate to="/app" replace />
             </div>
           </div>
         </div>

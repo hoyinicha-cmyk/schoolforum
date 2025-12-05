@@ -285,7 +285,7 @@ const StudentDashboard = () => {
         )}
 
         <Link
-          to="/forum/general"
+          to="/app/forum/general"
           className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-lg p-6 text-white hover:shadow-xl transition transform hover:scale-105"
         >
           <div className="flex items-center gap-4">
