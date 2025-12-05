@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug User Data</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #252526;
+            border-radius: 5px;
+        }
+        .label {
+            color: #4ec9b0;
+            font-weight: bold;
+        }
+        .value {
+            color: #ce9178;
+            margin-left: 10px;
+        }
+        .success {
+            color: #4ec9b0;
+        }
+        .error {
+            color: #f48771;
+        }
+        pre {
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 User Data Debug Tool</h1>
+    
+    <div class="section">
+        <h2>📦 LocalStorage User Data</h2>
+        <div id="userData"></div>
+    </div>
+    
+    <div class="section">
+        <h2>🎯 Badge Check</h2>
+        <div id="badgeCheck"></div>
+    </div>
+    
+    <div class="section">
+        <h2>🔐 Role Check</h2>
+        <div id="roleCheck"></div>
+    </div>
+    
+    <div class="section">
+        <h2>💬 ChatBox Access Check</h2>
+        <div id="chatboxCheck"></div>
+    </div>
+
+    <script>
+        // Get user from localStorage
+        const userStr = localStorage.getItem('user');
+        const user = userStr ? JSON.parse(userStr) : null;
+        
+        // Display user data
+        const userDataDiv = document.getElementById('userData');
+        if (user) {
+            userDataDiv.innerHTML = '<pre>' + JSON.stringify(user, null, 2) + '</pre>';
+        } else {
+            userDataDiv.innerHTML = '<span class="error">❌ No user data in localStorage</span>';
+        }
+        
+        // Badge check
+        const badgeCheckDiv = document.getElementById('badgeCheck');
+        if (user) {
+            if (user.badge) {
+                badgeCheckDiv.innerHTML = `<span class="success">✅ Badge exists: ${user.badge}</span>`;
+            } else {
+                badgeCheckDiv.innerHTML = '<span class="error">❌ Badge property is missing!</span>';
+            }
+        } else {
+            badgeCheckDiv.innerHTML = '<span class="error">❌ No user data</span>';
+        }
+        
+        // Role check
+        const roleCheckDiv = document.getElementById('roleCheck');
+        if (user) {
+            const isSpecialRole = ['admin', 'moderator', 'contributor'].includes(user.role);
+            if (isSpecialRole) {
+                roleCheckDiv.innerHTML = `<span class="success">✅ Special role: ${user.role}</span>`;
+            } else {
+                roleCheckDiv.innerHTML = `<span class="value">Role: ${user.role}</span>`;
+            }
+        } else {
+            roleCheckDiv.innerHTML = '<span class="error">❌ No user data</span>';
+        }
+        
+        // ChatBox access check
+        const chatboxCheckDiv = document.getElementById('chatboxCheck');
+        if (user) {
+            // Check role first (PRIORITY 1)
+            const hasRole = ['contributor', 'moderator', 'admin'].includes(user.role);
+            if (hasRole) {
+                chatboxCheckDiv.innerHTML = `
+                    <span class="success">✅ ChatBox Access: GRANTED (via role: ${user.role})</span><br>
+                    <span class="value">Priority 1: Role check passed</span>
+                `;
+            } else {
+                // Check badge (PRIORITY 2)
+                const hasActiveBadge = ['Forum Active', 'Forum Expert', 'Forum Contributor'].includes(user.badge);
+                if (hasActiveBadge) {
+                    chatboxCheckDiv.innerHTML = `
+                        <span class="success">✅ ChatBox Access: GRANTED (via badge: ${user.badge})</span><br>
+                        <span class="value">Priority 2: Badge check passed</span>
+                    `;
+                } else {
+                    chatboxCheckDiv.innerHTML = `
+                        <span class="error">❌ ChatBox Access: DENIED</span><br>
+                        <span class="value">Role: ${user.role} (not special)</span><br>
+                        <span class="value">Badge: ${user.badge || 'undefined'} (not Active/Expert/Contributor)</span>
+                    `;
+                }
+            }
+        } else {
+            chatboxCheckDiv.innerHTML = '<span class="error">❌ No user data</span>';
+        }
+    </script>
+</body>
+</html>

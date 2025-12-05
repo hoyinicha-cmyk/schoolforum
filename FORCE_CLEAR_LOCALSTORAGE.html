@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Force Clear LocalStorage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #252526;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #1177bb;
+        }
+        .success {
+            color: #4ec9b0;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .error {
+            color: #f48771;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .info {
+            color: #ce9178;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Force Clear LocalStorage</h1>
+        <p class="info">This will clear all stored user data and force a fresh login.</p>
+        
+        <button onclick="clearStorage()">Clear LocalStorage</button>
+        <button onclick="clearAndRedirect()">Clear & Go to Login</button>
+        
+        <div id="result"></div>
+        
+        <hr style="margin: 30px 0; border-color: #3e3e42;">
+        
+        <h2>Current LocalStorage Data:</h2>
+        <pre id="currentData" style="text-align: left; background: #1e1e1e; padding: 15px; border-radius: 5px; overflow-x: auto;"></pre>
+    </div>
+
+    <script>
+        // Display current localStorage data
+        function displayCurrentData() {
+            const user = localStorage.getItem('user');
+            const token = localStorage.getItem('token');
+            
+            const data = {
+                user: user ? JSON.parse(user) : null,
+                token: token ? token.substring(0, 50) + '...' : null
+            };
+            
+            document.getElementById('currentData').textContent = JSON.stringify(data, null, 2);
+        }
+        
+        // Clear localStorage
+        function clearStorage() {
+            localStorage.clear();
+            document.getElementById('result').innerHTML = '<p class="success">✅ LocalStorage cleared successfully!</p>';
+            displayCurrentData();
+        }
+        
+        // Clear and redirect to login
+        function clearAndRedirect() {
+            localStorage.clear();
+            window.location.href = 'http://localhost:3000/login';
+        }
+        
+        // Display on load
+        displayCurrentData();
+    </script>
+</body>
+</html>
