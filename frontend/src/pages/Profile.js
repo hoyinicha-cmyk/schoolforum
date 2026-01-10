@@ -9,7 +9,8 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   UserPlusIcon,
-  UsersIcon
+  UsersIcon,
+  EnvelopeIcon
 } from '@heroicons/react/24/outline';
 import { getApiBaseUrl } from '../utils/apiUrl';
 import Avatar from '../components/Profile/Avatar';
@@ -250,30 +251,6 @@ const Profile = () => {
     setEmailPassword('');
     setEmailCode('');
     setEmailChangeError('');
-  };
-
-  const handleResendVerification = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/auth/resend-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ email: user.email })
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        alert('Verification email sent! Check your inbox.');
-      } else {
-        alert(data.error || 'Failed to send verification email');
-      }
-    } catch (error) {
-      console.error('Resend verification error:', error);
-      alert('Failed to send verification email');
-    }
   };
 
   const fetchMyPosts = async () => {

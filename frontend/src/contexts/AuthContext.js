@@ -126,7 +126,7 @@ export const AuthProvider = ({ children }) => {
 
   const verifyEmail = async (token) => {
     try {
-      const res = await authAPI.verify(token);
+      await authAPI.verify(token);
       toast.success("Email verified!");
       return { success: true };
     } catch (err) {
