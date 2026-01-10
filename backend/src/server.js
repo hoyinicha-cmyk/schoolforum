@@ -60,7 +60,6 @@ app.use(cookieParser());
 app.use(morgan('combined'));
 
 // Serve uploaded files
-const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Serve profile photos from htdocs/upload-photo
 app.use('/upload-photo', express.static(path.join(__dirname, '../../../upload-photo')));
