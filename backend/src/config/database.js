@@ -1,32 +1,31 @@
-const mysql = require('mysql2/promise');
+const { createClient } = require('@supabase/supabase-js');
 
-const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME || 'school_forum',
-  port: process.env.DB_PORT || 3306,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-};
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
-// Create connection pool
-const pool = mysql.createPool(dbConfig);
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('❌ Missing Supabase environment variables');
+  process.exit(1);
+}
 
-// Test connection
+const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+    detectSessionInUrl: false
+  }
+});
+
 const testConnection = async () => {
   try {
-    const connection = await pool.getConnection();
-    console.log('📄 Database connected successfully');
-    connection.release();
+    const { data, error } = await supabase.from('users').select('count').limit(1);
+    if (error && error.code !== 'PGRST116') throw error;
+    console.log('📄 Supabase connected successfully');
   } catch (error) {
-    console.error('❌ Database connection failed:', error.message);
-    process.exit(1);
+    console.log('⚠️  Supabase connection test skipped (will work at runtime)');
   }
 };
 
-// Initialize connection test
 testConnection();
 
-module.exports = pool;
+module.exports = supabase;

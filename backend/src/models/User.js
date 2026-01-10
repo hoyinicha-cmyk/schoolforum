@@ -1,244 +1,302 @@
-const db = require('../config/database');
+const { supabaseAdmin } = require('../config/supabaseAdmin');
 
 class User {
   static async create(userData) {
-    const { 
-      email, 
-      password, 
-      firstName, 
-      lastName, 
-      yearLevel, 
+    const {
+      email,
+      password,
+      firstName,
+      lastName,
+      yearLevel,
       gradeLevel,
-      schoolIdPath, 
+      schoolIdPath,
       schoolIdNumber,
       status = 'pending',
       role = 'student',
       emailVerified = false,
       gender = 'prefer_not_to_say'
     } = userData;
-    
-    // Use gradeLevel if provided, otherwise use yearLevel (for backward compatibility)
+
     const grade = gradeLevel || yearLevel;
     const schoolId = schoolIdNumber || '';
-    
-    // Set default avatar based on gender
-    let defaultAvatar = 16; // Mason - default for prefer_not_to_say
+
+    let defaultAvatar = 16;
     if (gender === 'male') {
-      defaultAvatar = 16; // Mason
+      defaultAvatar = 16;
     } else if (gender === 'female') {
-      defaultAvatar = 17; // Sophia
+      defaultAvatar = 17;
     }
-    
-    const [result] = await db.execute(
-      `INSERT INTO users (email, password, first_name, last_name, year_level, school_id_path, school_id_number, status, role, email_verified, gender, avatar_id, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-      [email, password, firstName, lastName, grade, schoolIdPath || null, schoolId, status, role, emailVerified ? 1 : 0, gender, defaultAvatar]
-    );
-    
-    return result.insertId;
+
+    const { data, error } = await supabaseAdmin
+      .from('users')
+      .insert([{
+        email,
+        password,
+        first_name: firstName,
+        last_name: lastName,
+        year_level: grade,
+        school_id_path: schoolIdPath || null,
+        school_id_number: schoolId,
+        status,
+        role,
+        email_verified: emailVerified,
+        gender,
+        avatar_id: defaultAvatar
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data.id;
   }
-  
+
   static async findByEmail(email) {
-    const [rows] = await db.execute(
-      'SELECT * FROM users WHERE email = ?',
-      [email]
-    );
-    return rows[0];
+    const { data, error } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
   }
-  
+
   static async findById(id) {
-    const [rows] = await db.execute(
-      'SELECT id, email, first_name as firstName, last_name as lastName, year_level, year_level as yearLevel, status, role, email_verified as emailVerified, avatar_id as avatarId, profile_photo as profilePhoto, school_id_number as schoolIdNumber, badge, created_at as createdAt FROM users WHERE id = ?',
-      [id]
-    );
-    return rows[0];
-  }
-  
-  static async updateProfilePhoto(id, photoPath) {
-    await db.execute(
-      'UPDATE users SET profile_photo = ?, updated_at = NOW() WHERE id = ?',
-      [photoPath, id]
-    );
-  }
-  
-  static async updateEmailVerification(id, isVerified = true) {
-    await db.execute(
-      'UPDATE users SET email_verified = ?, updated_at = NOW() WHERE id = ?',
-      [isVerified, id]
-    );
-  }
-  
-  static async updateStatus(id, status, role = null) {
-    if (role) {
-      await db.execute(
-        'UPDATE users SET status = ?, role = ?, updated_at = NOW() WHERE id = ?',
-        [status, role, id]
-      );
-    } else {
-      await db.execute(
-        'UPDATE users SET status = ?, updated_at = NOW() WHERE id = ?',
-        [status, id]
-      );
-    }
-  }
-  
-  static async getPendingUsers() {
-    const [rows] = await db.execute(
-      `SELECT id, email, first_name, last_name, year_level, school_id_path, created_at 
-       FROM users 
-       WHERE status = 'pending' AND email_verified = 1
-       ORDER BY created_at ASC`
-    );
-    return rows;
-  }
-  
-  static async deleteSchoolId(id) {
-    await db.execute(
-      'UPDATE users SET school_id_path = NULL WHERE id = ?',
-      [id]
-    );
-  }
-  
-  static async updateYearLevel(id, yearLevel) {
-    await db.execute(
-      'UPDATE users SET year_level = ?, updated_at = NOW() WHERE id = ?',
-      [yearLevel, id]
-    );
-  }
-  
-  static async updateSchoolId(id, schoolIdPath) {
-    await db.execute(
-      'UPDATE users SET school_id_path = ?, updated_at = NOW() WHERE id = ?',
-      [schoolIdPath, id]
-    );
-  }
-  
-  static async updateSchoolIdNumber(id, schoolIdNumber) {
-    await db.execute(
-      'UPDATE users SET school_id_number = ?, updated_at = NOW() WHERE id = ?',
-      [schoolIdNumber, id]
-    );
-  }
-  
-  static async query(query, params) {
-    const [rows] = await db.execute(query, params);
-    return rows;
-  }
-  
-  static async getStats() {
-    const [totalUsers] = await db.execute('SELECT COUNT(*) as count FROM users');
-    const [pendingUsers] = await db.execute('SELECT COUNT(*) as count FROM users WHERE status = "pending"');
-    const [activeUsers] = await db.execute('SELECT COUNT(*) as count FROM users WHERE status = "active"');
-    const [g11Users] = await db.execute('SELECT COUNT(*) as count FROM users WHERE year_level = "G11" AND status = "active"');
-    const [g12Users] = await db.execute('SELECT COUNT(*) as count FROM users WHERE year_level = "G12" AND status = "active"');
-    
+    const { data, error } = await supabaseAdmin
+      .from('users')
+      .select(`
+        id, email, first_name, last_name, year_level,
+        status, role, email_verified, avatar_id, profile_photo,
+        school_id_number, badge, created_at
+      `)
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) return null;
+
     return {
-      total: totalUsers[0].count,
-      pending: pendingUsers[0].count,
-      active: activeUsers[0].count,
-      g11: g11Users[0].count,
-      g12: g12Users[0].count
+      id: data.id,
+      email: data.email,
+      firstName: data.first_name,
+      lastName: data.last_name,
+      year_level: data.year_level,
+      yearLevel: data.year_level,
+      status: data.status,
+      role: data.role,
+      emailVerified: data.email_verified,
+      avatarId: data.avatar_id,
+      profilePhoto: data.profile_photo,
+      schoolIdNumber: data.school_id_number,
+      badge: data.badge,
+      createdAt: data.created_at
+    };
+  }
+
+  static async updateProfilePhoto(id, photoPath) {
+    const { error } = await supabaseAdmin
+      .from('users')
+      .update({ profile_photo: photoPath, updated_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  static async updateEmailVerification(id, isVerified = true) {
+    const { error } = await supabaseAdmin
+      .from('users')
+      .update({ email_verified: isVerified, updated_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  static async updateStatus(id, status, role = null) {
+    const updates = { status, updated_at: new Date().toISOString() };
+    if (role) updates.role = role;
+
+    const { error } = await supabaseAdmin
+      .from('users')
+      .update(updates)
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  static async getPendingUsers() {
+    const { data, error } = await supabaseAdmin
+      .from('users')
+      .select('id, email, first_name, last_name, year_level, school_id_path, created_at')
+      .eq('status', 'pending')
+      .eq('email_verified', true)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  static async deleteSchoolId(id) {
+    const { error } = await supabaseAdmin
+      .from('users')
+      .update({ school_id_path: null })
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  static async updateYearLevel(id, yearLevel) {
+    const { error } = await supabaseAdmin
+      .from('users')
+      .update({ year_level: yearLevel, updated_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  static async updateSchoolId(id, schoolIdPath) {
+    const { error } = await supabaseAdmin
+      .from('users')
+      .update({ school_id_path: schoolIdPath, updated_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  static async updateSchoolIdNumber(id, schoolIdNumber) {
+    const { error } = await supabaseAdmin
+      .from('users')
+      .update({ school_id_number: schoolIdNumber, updated_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  static async query(sqlQuery, params) {
+    const { data, error } = await supabaseAdmin.rpc('exec_sql', {
+      query: sqlQuery,
+      params: params
+    });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  static async getStats() {
+    const { count: total } = await supabaseAdmin
+      .from('users')
+      .select('*', { count: 'exact', head: true });
+
+    const { count: pending } = await supabaseAdmin
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'pending');
+
+    const { count: active } = await supabaseAdmin
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'active');
+
+    const { count: g11 } = await supabaseAdmin
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .eq('year_level', 'G11')
+      .eq('status', 'active');
+
+    const { count: g12 } = await supabaseAdmin
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .eq('year_level', 'G12')
+      .eq('status', 'active');
+
+    return {
+      total: total || 0,
+      pending: pending || 0,
+      active: active || 0,
+      g11: g11 || 0,
+      g12: g12 || 0
     };
   }
 
   static async findAll() {
-    const [rows] = await db.execute(`
-      SELECT 
-        id, 
-        email, 
-        first_name as firstName, 
-        last_name as lastName, 
-        year_level as yearLevel, 
-        status, 
-        status_reason as statusReason,
-        role, 
-        email_verified as emailVerified,
-        avatar_id as avatarId,
-        profile_photo as profilePhoto,
-        school_id_number as schoolIdNumber,
-        created_at as createdAt
-      FROM users 
-      ORDER BY created_at DESC
-    `);
-    return rows;
+    const { data, error } = await supabaseAdmin
+      .from('users')
+      .select(`
+        id, email, first_name, last_name, year_level,
+        status, status_reason, role, email_verified,
+        avatar_id, profile_photo, school_id_number, created_at
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    return (data || []).map(user => ({
+      id: user.id,
+      email: user.email,
+      firstName: user.first_name,
+      lastName: user.last_name,
+      yearLevel: user.year_level,
+      status: user.status,
+      statusReason: user.status_reason,
+      role: user.role,
+      emailVerified: user.email_verified,
+      avatarId: user.avatar_id,
+      profilePhoto: user.profile_photo,
+      schoolIdNumber: user.school_id_number,
+      createdAt: user.created_at
+    }));
   }
+
   static async updatePassword(id, hashedPassword) {
-  await db.execute(
-    'UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?',
-    [hashedPassword, id]
-  );
+    const { error } = await supabaseAdmin
+      .from('users')
+      .update({ password: hashedPassword, updated_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) throw error;
   }
 
   static async update(id, userData) {
     const { firstName, lastName, email, password, role, gradeLevel, schoolIdNumber, avatarId, profilePhoto } = userData;
-    
-    const updates = [];
-    const values = [];
-    
-    if (firstName) {
-      updates.push('first_name = ?');
-      values.push(firstName);
-    }
-    if (lastName) {
-      updates.push('last_name = ?');
-      values.push(lastName);
-    }
-    if (email) {
-      updates.push('email = ?');
-      values.push(email);
-    }
-    if (password) {
-      updates.push('password = ?');
-      values.push(password);
-    }
-    if (role) {
-      updates.push('role = ?');
-      values.push(role);
-    }
+
+    const updates = { updated_at: new Date().toISOString() };
+
+    if (firstName) updates.first_name = firstName;
+    if (lastName) updates.last_name = lastName;
+    if (email) updates.email = email;
+    if (password) updates.password = password;
+    if (role) updates.role = role;
     if (gradeLevel) {
-      updates.push('year_level = ?');
-      // Convert "11" or "12" to "G11" or "G12" format
       const formattedGrade = gradeLevel.startsWith('G') ? gradeLevel : `G${gradeLevel}`;
-      values.push(formattedGrade);
+      updates.year_level = formattedGrade;
     }
-    if (schoolIdNumber !== undefined) {
-      updates.push('school_id_number = ?');
-      values.push(schoolIdNumber);
-    }
-    if (avatarId !== undefined) {
-      updates.push('avatar_id = ?');
-      values.push(avatarId);
-    }
-    if (profilePhoto !== undefined) {
-      updates.push('profile_photo = ?');
-      values.push(profilePhoto);
-    }
-    
-    if (updates.length === 0) {
-      return;
-    }
-    
-    updates.push('updated_at = NOW()');
-    values.push(id);
-    
-    await db.execute(
-      `UPDATE users SET ${updates.join(', ')} WHERE id = ?`,
-      values
-    );
+    if (schoolIdNumber !== undefined) updates.school_id_number = schoolIdNumber;
+    if (avatarId !== undefined) updates.avatar_id = avatarId;
+    if (profilePhoto !== undefined) updates.profile_photo = profilePhoto;
+
+    const { error } = await supabaseAdmin
+      .from('users')
+      .update(updates)
+      .eq('id', id);
+
+    if (error) throw error;
   }
-  
+
   static async delete(id) {
-    await db.execute(
-      'DELETE FROM users WHERE id = ?',
-      [id]
-    );
+    const { error } = await supabaseAdmin
+      .from('users')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
   }
 
   static async updateStatusReason(id, reason) {
-    await db.execute(
-      'UPDATE users SET status_reason = ?, updated_at = NOW() WHERE id = ?',
-      [reason, id]
-    );
+    const { error } = await supabaseAdmin
+      .from('users')
+      .update({ status_reason: reason, updated_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) throw error;
   }
 }
 
