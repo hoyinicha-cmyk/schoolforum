@@ -38,3 +38,4 @@ Thumbs.db
 # Editor settings
 .vscode/
 .idea/
+.env
