@@ -8,7 +8,6 @@ import {
   HomeIcon,
   ChatBubbleLeftRightIcon,
   AcademicCapIcon,
-  CogIcon,
   UserGroupIcon,
   DocumentTextIcon,
   CloudArrowUpIcon,

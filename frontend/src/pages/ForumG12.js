@@ -16,9 +16,10 @@ const ForumG12 = () => {
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showUserProfile, setShowUserProfile] = useState(null);
-  const [searchPrefix, setSearchPrefix] = useState('');
+
   useEffect(() => {
     fetchPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchPosts = async () => {

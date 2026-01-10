@@ -12,7 +12,6 @@ import {
   EyeIcon,
   ChatBubbleOvalLeftEllipsisIcon,
   ClockIcon,
-  FireIcon,
   XMarkIcon,
   ChevronLeftIcon,
   ChevronRightIcon

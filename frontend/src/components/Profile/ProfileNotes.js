@@ -20,6 +20,7 @@ const ProfileNotes = ({ userId, isOwnProfile, user }) => {
 
   useEffect(() => {
     fetchNote();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const fetchNote = async () => {

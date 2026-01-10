@@ -63,24 +63,6 @@ const CreateThreadModal = ({ isOpen, onClose, forumType, onThreadCreated }) => {
     }
   };
 
-  const insertHiddenTag = () => {
-    const textarea = document.getElementById('thread-content');
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = formData.content;
-    const before = text.substring(0, start);
-    const selected = text.substring(start, end);
-    const after = text.substring(end);
-    
-    const newContent = `${before}[HIDDEN]${selected || 'Hidden content here'}[/HIDDEN]${after}`;
-    setFormData({ ...formData, content: newContent, hasHiddenContent: true });
-    
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + 8, start + 8 + (selected || 'Hidden content here').length);
-    }, 0);
-  };
-
   const insertHideUserTag = (hideTag) => {
     const textarea = document.getElementById('thread-content');
     const start = textarea.selectionStart;

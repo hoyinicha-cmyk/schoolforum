@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { 
-  UserIcon, 
-  EnvelopeIcon, 
+import {
   AcademicCapIcon,
   CalendarIcon,
   ChatBubbleLeftIcon,
@@ -11,7 +9,6 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   UserPlusIcon,
-  UserMinusIcon,
   UsersIcon
 } from '@heroicons/react/24/outline';
 import { getApiBaseUrl } from '../utils/apiUrl';

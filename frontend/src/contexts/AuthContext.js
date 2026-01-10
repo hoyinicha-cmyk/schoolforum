@@ -32,8 +32,8 @@ export const AuthProvider = ({ children }) => {
           if (!storedUser.badge) {
             console.log('⚠️ Badge property missing, refreshing user data...');
             try {
-              const res = await authAPI.getProfile();
-              const updatedUser = res.data.user;
+              const response = await authAPI.getProfile();
+              const updatedUser = response.data.user;
               console.log('📦 Fresh user data received:', updatedUser);
               setUser(updatedUser);
               setIsAuthenticated(true);

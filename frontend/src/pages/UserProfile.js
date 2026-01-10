@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { 
-  EnvelopeIcon, 
+import {
   AcademicCapIcon,
   CalendarIcon,
   ChatBubbleLeftIcon,
@@ -39,6 +38,7 @@ const UserProfile = () => {
     if (!isOwnProfile) {
       checkIfFollowing();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const fetchUserProfile = async () => {

@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link, Navigate, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { ButtonSpinner } from '../components/Common/LoadingSpinner';
 import { EyeIcon, EyeSlashIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 
 const Login = () => {
-  const { login, isAuthenticated } = useAuth();
+  const { login } = useAuth();
   const toast = useToast();
-  const location = useLocation();
   const [formData, setFormData] = useState({
     email: '',
     password: ''

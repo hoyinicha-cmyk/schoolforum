@@ -23,7 +23,7 @@ import Avatar from '../components/Profile/Avatar';
 import { forumAPI } from '../services/api';
 import { removeKeycapEmojis } from '../utils/removeKeycapEmojis';
 import { parseHideContent } from '../utils/hideContentParser';
-import { hasContributorPrivileges, hasModeratorPrivileges, canLockThreads } from '../utils/contributorCheck';
+import { hasModeratorPrivileges, canLockThreads } from '../utils/contributorCheck';
 import '../components/Forum/HideContentStyles.css';
 
 // Move ReplyItem outside to prevent re-creation on every render

@@ -39,8 +39,9 @@ const UserProfileCard = ({ userId, onClose }) => {
     console.log('Parsed Profile User ID:', parseInt(userId), 'Type:', typeof parseInt(userId));
     console.log('NEW Comparison:', parseInt(currentUser.id), '===', parseInt(userId), '=', parseInt(currentUser.id) === parseInt(userId));
     console.log('Is Own Profile:', isOwnProfile);
-    
+
     fetchUserData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const fetchUserData = async () => {

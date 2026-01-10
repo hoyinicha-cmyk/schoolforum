@@ -27,7 +27,6 @@ import AccessDenied from "./pages/AccessDenied";
 import Messages from "./pages/Messages";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ToastProvider } from "./contexts/ToastContext";
-import UserStatusMonitor from "./components/Common/UserStatusMonitor";
 
 function App() {
   return (
